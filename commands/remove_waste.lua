@@ -14,7 +14,7 @@ local function remove_waste_command(param)
   local existing_entities = surface.find_entities_filtered{area = area, type = { "tile-ghost", "entity-ghost" }, invert = true}
 
   local player_owned_entities = table.filter(existing_entities, function(entity)
-    return current_player == entity.last_user or entity.type == "player"
+    return current_player == entity.last_user or entity.type == "character"
     end)
 
   local tiles = surface.find_tiles_filtered{ area = area }

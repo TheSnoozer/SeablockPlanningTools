@@ -178,7 +178,7 @@ local function optimize_inserter(player, selected)
                   valid_configuration = modify_inserter(player, selected, pickup_x, pickup_y, dropoff_x, dropoff_y, drop_offset_x, drop_offset_y)
 
                   local current_swing_time = inserter_swing_time(selected)
-                  log(current_swing_time)
+                  --log(current_swing_time)
 
                   if valid_configuration and current_swing_time < best_swing_time then
 
@@ -208,8 +208,8 @@ local function optimize_inserter(player, selected)
   }
 
   if best_swing_time < original_swing_time then
-    game.print(string.format("The inserter can be optimized from %f to %f", original_swing_time, best_swing_time))
-    log(string.format("The inserter can be optimized from %f to %f", original_swing_time, best_swing_time))
+    --game.print(string.format("The inserter can be optimized from %f to %f", original_swing_time, best_swing_time))
+    --log(string.format("The inserter can be optimized from %f to %f", original_swing_time, best_swing_time))
   end
 end
 
@@ -223,7 +223,7 @@ local function optimize_inserter_command(param)
 end
 
 local function optimize_inserters_command(param)
-  debug(serpent.block(param))
+  --debug(serpent.block(param))
   if not param.parameter then return game.print("missing <radius>") end
 
   local current_player = SeablockPlanningTools.player(param.player_index)
