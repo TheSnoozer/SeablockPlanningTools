@@ -124,7 +124,8 @@ local function optimize_inserter(player, selected)
   selected.drop_position = best_dropoff
 
   rendering.draw_text {
-    text = string.format("%.2fs", best_swing_time),
+    text = string.format("%.2f/s", 1.0 / best_swing_time),
+    scale = 0.8,
     surface = selected.surface,
     target = selected,
     time_to_live = 180,
