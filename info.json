@@ -1,0 +1,9 @@
+{
+  "name": "SeablockPlanningTools",
+  "version": "0.1.0",
+  "title": "Seablock Planning Tools",
+  "author": "randomdude",
+  "description": "Commands aided in helping plan builds in Seablock specifically, but some can be helpful elsewhere",
+  "dependencies": [ "base >= 0.17"],
+  "factorio_version": "0.17"
+}
