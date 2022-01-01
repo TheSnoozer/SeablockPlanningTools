@@ -36,6 +36,14 @@ local function print_inserter_command(param)
   local extension_time = math.abs(pickup_distance - dropoff_distance) / inserter_parameters.extension_speed / 60.0
   local rotation_time = (angle / (2 * math.pi)) / inserter_parameters.rotation_speed / 60
 
+  rendering.draw_text {
+    text = string.format("%.2fs", extension_time * 2 + rotation_time * 2),
+    surface = selected.surface,
+    target = selected,
+    time_to_live = 180,
+    color = { r = 1, g = 1, b = 1}
+  }
+
   game.print(serpent.block {
     pickup_distance = pickup_distance,
     dropoff_distance = dropoff_distance,

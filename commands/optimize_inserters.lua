@@ -47,9 +47,21 @@ local function modify_inserter(inserter, pickup_x, pickup_y, dropoff_x, dropoff_
   inserter.drop_position = { x = inserter.position.x + dropoff_x + drop_offset_x * 0.2, y = inserter.position.y + dropoff_y + drop_offset_y * 0.2 }
 end
 
-local function is_in_bounding_box(position, entity)
+local function is_in_bounding_box(player, inserter, position, entity)
   if not entity then
     game.print("Some inserters don't have a set pickup or target, those will be ignored")
+    rendering.draw_rectangle {
+      color = { r = 1 },
+      width = 1,
+      filled = false,
+      left_top = inserter,
+      left_top_offset = { -0.5, -0.5 },
+      right_bottom = inserter,
+      right_bottom_offset = { 0.5, 0.5 },
+
+      time_to_live = 180,
+      surface = inserter.surface}
+
     return false
   end
 
@@ -61,7 +73,7 @@ local function is_in_bounding_box(position, entity)
     position.y >= bounding_box.left_top.y)
 end
 
-local function optimize_inserter(selected)
+local function optimize_inserter(player, selected)
   local current_swing_time = inserter_swing_time(selected)
   local best_swing_time = current_swing_time
 
@@ -81,13 +93,13 @@ local function optimize_inserter(selected)
 
       modify_inserter(selected, pickup_x, pickup_y, 1, 1, 0, 0)
 
-      if is_in_bounding_box(selected.pickup_position, original_pickup_target) then
+      if is_in_bounding_box(player, selected, selected.pickup_position, original_pickup_target) then
         for dropoff_x = -3, 3 do
           for dropoff_y = -3, 3 do
 
             modify_inserter(selected, pickup_x, pickup_y, dropoff_x, dropoff_y, 0, 0)
 
-            if is_in_bounding_box(selected.drop_position, original_dropoff_target) then
+            if is_in_bounding_box(player, selected, selected.drop_position, original_dropoff_target) then
               for drop_offset_x = -1, 1 do
                 for drop_offset_y = -1, 1 do
                   modify_inserter(selected, pickup_x, pickup_y, dropoff_x, dropoff_y, drop_offset_x, drop_offset_y)
@@ -111,6 +123,14 @@ local function optimize_inserter(selected)
   selected.pickup_position = best_pickup
   selected.drop_position = best_dropoff
 
+  rendering.draw_text {
+    text = string.format("%.2fs", best_swing_time),
+    surface = selected.surface,
+    target = selected,
+    time_to_live = 180,
+    color = { r = 1, g = 1, b = 1}
+  }
+
   if best_swing_time < original_swing_time then
     game.print(string.format("The inserter can be optimized from %f to %f", original_swing_time, best_swing_time))
     log(string.format("The inserter can be optimized from %f to %f", original_swing_time, best_swing_time))
@@ -123,7 +143,7 @@ local function optimize_inserter_command(param)
 
   if selected == nil or selected.type ~= "inserter" then return end
 
-  optimize_inserter(selected)
+  optimize_inserter(current_player, selected)
 end
 
 local function optimize_inserters_command(param)
@@ -140,7 +160,7 @@ local function optimize_inserters_command(param)
   local existing_entities = surface.find_entities_filtered{area = area, type = "inserter" }
 
   for _, inserter in pairs(existing_entities) do
-    optimize_inserter(inserter)
+    optimize_inserter(current_player, inserter)
   end
 end
 
