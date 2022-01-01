@@ -20,7 +20,7 @@ local function northify_inserter_command(param)
 end
 
 local function northify_inserters_command(param)
-  if not param.parameter then return game.print("missing <radius") end
+  if not param.parameter then return game.print("missing <radius>") end
 
   local current_player = SeablockPlanningTools.player(param.player_index)
   local radius = tonumber(param.parameter)
@@ -39,7 +39,7 @@ end
 
 exported_commands = {
   ["northify-inserter"] = northify_inserter_command,
-  ["northify-inserters"] = northify_inserters_command
+  ["northify-inserters-in-radius"] = northify_inserters_command
 }
 
 SeablockPlanningTools.commands = table.merge(SeablockPlanningTools.commands, exported_commands)

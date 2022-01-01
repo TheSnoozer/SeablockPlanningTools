@@ -8,6 +8,8 @@ SeablockPlanningTools = {
 require("commands/northify_inserters")
 require("commands/remove_waste")
 require("commands/print_inserter")
+require("commands/optimize_inserters")
+
 
 local function add_commands()
   for command, command_function in pairs(SeablockPlanningTools.commands) do

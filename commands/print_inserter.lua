@@ -33,7 +33,7 @@ local function print_inserter_command(param)
 
   local angle = math.acos(dotp(pickup_vector, dropoff_vector) / (pickup_distance * dropoff_distance))
 
-  local extension_time = math.abs(pickup_distance - dropoff_distance) * inserter_parameters.extension_speed / 60.0
+  local extension_time = math.abs(pickup_distance - dropoff_distance) / inserter_parameters.extension_speed / 60.0
   local rotation_time = (angle / (2 * math.pi)) / inserter_parameters.rotation_speed / 60
 
   game.print(serpent.block {
