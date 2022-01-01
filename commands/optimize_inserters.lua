@@ -23,7 +23,7 @@ local function inserter_swing_time(inserter)
 
   local angle = math.acos(dotp(pickup_vector, dropoff_vector) / (pickup_distance * dropoff_distance))
   local extension_time = (math.abs(pickup_distance - dropoff_distance) / inserter_parameters.extension_speed) / 60.0
-  local rotation_time = (angle / (2 * math.pi)) / inserter_parameters.rotation_speed / 60
+  local rotation_time = (angle / (2 * math.pi)) / inserter_parameters.rotation_speed / 60.0
   local total_swing_time = extension_time * 2 + rotation_time * 2
 
   return total_swing_time
@@ -94,7 +94,7 @@ local function configuration_is_unlocked(player, pickup_x, pickup_y, dropoff_x, 
     local dropoff_unit_vector = SeablockPlanningTools.math.unit_vector({ x = dropoff_x, y = dropoff_y})
     local offset_unit_vector = SeablockPlanningTools.math.unit_vector({ x = drop_offset_x, y = drop_offset_y})
 
-    if not tech_unlocked(player, inserter_technologies.near_technology) and 
+    if not tech_unlocked(player, inserter_technologies.near_technology) and
       (dropoff_unit_vector.x ~= offset_unit_vector.x or dropoff_unit_vector.y ~= offset_unit_vector.y) then
       --debug(message .. " Near")
       return false
@@ -246,6 +246,85 @@ local function listen_to_optimize_in_range(event, range)
     optimize_inserters_command({ player_index = event.player_index, parameter = settings.player[range].value})
   end)
 end
+
+script.on_event("spt-show-chest-throughput", function(event)
+  local current_player = SeablockPlanningTools.player(event.player_index)
+  if not current_player.selected then return end
+
+  local radius = 20
+  local position = current_player.selected.position
+  local x = math.floor(position.x)
+  local y = math.floor(position.y)
+
+  local area = { left_top = { x - radius, y - radius}, right_bottom = { x + radius + 1.5, y + radius + 1.5 } }
+  local surface = current_player.surface
+  local existing_entities = surface.find_entities_filtered{area = area, type = "inserter" }
+  local input = 0.0
+  local output = 0.0
+  local selected = current_player.selected
+
+  for _, inserter in pairs(existing_entities) do
+    time = inserter_swing_time(inserter)
+    if inserter.drop_target == selected then
+      input = input + (1.0 / time)
+
+      rendering.draw_rectangle {
+        color = { g = 1 },
+        width = 1,
+        filled = false,
+        left_top = inserter,
+        left_top_offset = { -0.5, -0.5 },
+        right_bottom = inserter,
+        right_bottom_offset = { 0.5, 0.5 },
+
+        time_to_live = 180,
+        surface = inserter.surface}
+    end
+    if inserter.pickup_target == selected then
+      output = output + (1.0 / time)
+
+      rendering.draw_rectangle {
+        color = { r = 1 },
+        width = 1,
+        filled = false,
+        left_top = inserter,
+        left_top_offset = { -0.5, -0.5 },
+        right_bottom = inserter,
+        right_bottom_offset = { 0.5, 0.5 },
+
+        time_to_live = 180,
+        surface = inserter.surface}
+    end
+  end
+
+  game.print(string.format("input: %s output: %s", input, output))
+end)
+
+script.on_event("spt-show-nests", function(event)
+  local current_player = SeablockPlanningTools.player(event.player_index)
+  local surface = current_player.surface
+  local surfaces = game.surfaces
+  local selected = current_player.selected
+
+  for name, surface in pairs(surfaces) do
+    local existing_entities = surface.find_entities_filtered{ type = "unit-spawner"}
+    game.print(string.format("%s nests: %s", name, #existing_entities))
+    for _, inserter in pairs(existing_entities) do
+        rendering.draw_rectangle {
+          color = { r = 1 },
+          width = 10,
+          filled = false,
+          left_top = inserter,
+          left_top_offset = { -10, -10 },
+          right_bottom = inserter,
+          right_bottom_offset = { 10, 10 },
+
+          time_to_live = 180,
+          surface = inserter.surface}
+    end
+  end
+end)
+
 
 listen_to_optimize_in_range("spt-optimize-default-range", "spt-default-range-optimizer")
 listen_to_optimize_in_range("spt-optimize-small-range", "spt-small-range-optimizer")

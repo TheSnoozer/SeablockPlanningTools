@@ -22,5 +22,18 @@ data:extend {
     name = "spt-optimize-large-range",
     key_sequence = "SHIFT + ALT + O",
     consuming = "script-only"
+  },
+  {
+    type = "custom-input",
+    name = "spt-show-chest-throughput",
+    key_sequence = "ALT + T",
+    consuming = "script-only"
+  },
+
+  {
+    type = "custom-input",
+    name = "spt-show-nests",
+    key_sequence = "ALT + N",
+    consuming = "script-only"
   }
 }

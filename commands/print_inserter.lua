@@ -25,16 +25,14 @@ local function print_inserter(player, selected)
   local pickup_distance = mag(pickup_vector)
   local dropoff_distance = mag(dropoff_vector)
 
-  local dropoff_offset = { x = 0, y = 0 }
-
   local angle = math.acos(dotp(pickup_vector, dropoff_vector) / (pickup_distance * dropoff_distance))
 
   local extension_time = math.abs(pickup_distance - dropoff_distance) / inserter_parameters.extension_speed / 60.0
-  local rotation_time = (angle / (2 * math.pi)) / inserter_parameters.rotation_speed / 60
+  local rotation_time = (angle / (2 * math.pi)) / inserter_parameters.rotation_speed / 60.0
   local total_swing_time = extension_time * 2 + rotation_time * 2
 
   rendering.draw_text {
-    text = string.format("%.2f/s", 1 / total_swing_time),
+    text = string.format("%.2f/s", 1.0 / total_swing_time),
     scale = 0.8,
     surface = selected.surface,
     target = selected,
