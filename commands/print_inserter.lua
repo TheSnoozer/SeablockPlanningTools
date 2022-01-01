@@ -1,15 +1,3 @@
-local function dotp(v1, v2)
-  return v1.x * v2.x + v1.y * v2.y
-end
-
-local function mag(v)
-  return math.sqrt(math.pow(math.abs(v.x), 2) + math.pow(math.abs(v.y), 2))
-end
-
-local function vector_from(start_pos, end_pos)
-  return { x = end_pos.x - start_pos.x, y = end_pos.y - start_pos.y }
-end
-
 local function print_inserter_command(param)
   local current_player = SeablockPlanningTools.player(param.player_index)
   local selected = current_player.selected
@@ -20,6 +8,10 @@ local function print_inserter_command(param)
 end
 
 local function print_inserter(player, selected)
+  local dotp = SeablockPlanningTools.math.dotp
+  local vector_from = SeablockPlanningTools.math.vector_from
+  local mag = SeablockPlanningTools.math.mag
+
   local pickup = selected.pickup_position
   local position = selected.position
   local dropoff = selected.drop_position
